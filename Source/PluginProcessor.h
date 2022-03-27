@@ -2,9 +2,6 @@
 
 #include <JuceHeader.h>
 
-//==============================================================================
-/**
-*/
 class SparklerAutoPanAudioProcessor :   public juce::AudioProcessor
 {
 public:
@@ -77,6 +74,6 @@ public:
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();   
 
-    //==============================================================================
+    //===========================================================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SparklerAutoPanAudioProcessor)
 };

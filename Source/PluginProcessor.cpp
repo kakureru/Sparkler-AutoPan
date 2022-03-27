@@ -94,8 +94,8 @@ void SparklerAutoPanAudioProcessor::prepareToPlay (double sampleRate, int sample
     sensitivity = std::abs(apvts.getRawParameterValue("SENSITIVITY")->load() - 1.f) * sensitivityMultiplier;
     latency     = apvts.getRawParameterValue("SHARPNESS")->load();
     peakLength  = apvts.getRawParameterValue("PEAK LENGTH")->load() * sampleRateValue;
-    panModel = apvts.getRawParameterValue("PAN MODEL")->load();
-    speed       = apvts.getRawParameterValue("SPEED")->load() * speedMultiplier;
+    panModel    = apvts.getRawParameterValue("PAN MODEL")->load();
+    speed       = std::abs(apvts.getRawParameterValue("SPEED")->load() - 101) * speedMultiplier;
     width       = apvts.getRawParameterValue("WIDTH")->load();
 }
 
@@ -245,8 +245,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout SparklerAutoPanAudioProcesso
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
     params.push_back(std::make_unique<juce::AudioParameterBool> ("BYPASS",     "bypass",        false));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("SENSITIVITY","sensitivity",   0.1f, 1.0f, 0.3f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("SHARPNESS",  "sharpness",     0.5f, 1.f, 0.9f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("SENSITIVITY","sensitivity",   0.1f, 1.0f, 0.7f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("SHARPNESS",  "sharpness",     0.5f, 0.99f, 0.8f));
     params.push_back(std::make_unique<juce::AudioParameterInt>  ("PEAK LENGTH","peak length",   10, 500, 200));
     params.push_back(std::make_unique<juce::AudioParameterInt>  ("PAN MODEL",  "pan model",     0, 1, 0));
     params.push_back(std::make_unique<juce::AudioParameterInt>  ("SPEED",      "speed",         1, 100, 50));
