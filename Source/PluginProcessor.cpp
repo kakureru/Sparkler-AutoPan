@@ -86,8 +86,7 @@ void SparklerAutoPanAudioProcessor::changeProgramName (int index, const juce::St
 //==============================================================================
 void SparklerAutoPanAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    rmsLevel.reset(sampleRate, 0.1);
-    rmsLevel.setCurrentAndTargetValue(-100.f);
+    transientComputer.prepare(2, sampleRate, 256);
 
     sampleRateValue = sampleRate / 1000;
 
@@ -95,7 +94,7 @@ void SparklerAutoPanAudioProcessor::prepareToPlay (double sampleRate, int sample
     latency     = apvts.getRawParameterValue("SHARPNESS")->load();
     peakLength  = apvts.getRawParameterValue("PEAK LENGTH")->load() * sampleRateValue;
     panModel    = apvts.getRawParameterValue("PAN MODEL")->load();
-    speed       = std::abs(apvts.getRawParameterValue("SPEED")->load() - 101) * speedMultiplier;
+    speed       = std::abs(apvts.getRawParameterValue("SPEED")->load() - 101);
     width       = apvts.getRawParameterValue("WIDTH")->load();
 }
 
@@ -135,84 +134,20 @@ bool SparklerAutoPanAudioProcessor::isBusesLayoutSupported (const BusesLayout& l
 void SparklerAutoPanAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto* channelDataL = buffer.getWritePointer(0);
-    auto* channelDataR = buffer.getWritePointer(1);
+    auto totalNumInputChannels = getTotalNumInputChannels();
+    auto totalNumOutputChannels = getTotalNumOutputChannels();
+    const int numSamples = buffer.getNumSamples();
+    // clear not needed output channels
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+        buffer.clear(i, 0, numSamples);
 
-    rmsLevel.skip(mDetectionLength);
+    //==============================================================================  
 
-    // rms follower
-    const auto value = (buffer.getRMSLevel(0, 0, mDetectionLength) + buffer.getRMSLevel(1, 0, mDetectionLength)) / 2;
-    if (value < rmsLevel.getCurrentValue())
-    {
-        rmsLevel.setTargetValue(value);       
-    }        
-    else
-    {
-        rmsLevel.setCurrentAndTargetValue(value);       
-    }   
+    // transient detection
+    transientComputer.detectTransients(buffer, sensitivity, latency, peakLength);
 
-    // rms follower with latency
-    const auto valueLatency = (1 - latency) * rmsLevel.getCurrentValue() + latency * rmsLevelLatency.getCurrentValue();
-    if (valueLatency < rmsLevelLatency.getCurrentValue())
-    {
-        rmsLevelLatency.setTargetValue((1 - 0.1) * rmsLevel.getCurrentValue() + 0.1 * rmsLevelLatency.getCurrentValue());
-    }
-    else
-    {
-        rmsLevelLatency.setTargetValue(valueLatency);
-    }       
-
-    // transient detection   
-    if (currentPeakLength > peakLength)
-    {        
-        if (rmsLevel.getCurrentValue() - rmsLevelLatency.getCurrentValue() >= sensitivity)
-        {
-            trans = 1;
-            currentPeakLength = 0;
-            currentPosition = position;
-            // random position            
-            if (panModel == 0)
-            {
-                std::random_device random_device;                                                           // Источник энтропии
-                std::mt19937 generator(random_device());                                                    // Генератор случайных чисел
-                std::uniform_int_distribution<> distribution(45 - width * 45 / 100, 45 + width * 45 / 100); // Распределение
-                int r = distribution(generator);                                                            // Случайное число
-                position = (r * juce::double_Pi) / 180;
-
-            }
-            // ping pong position 
-            else
-            {
-                if (positionChannel == 0)
-                {
-                    position = juce::double_Pi / 4 - width * juce::double_Pi / 400;
-                    positionChannel = 1;
-                }
-                else
-                {
-                    position = juce::double_Pi / 4 + width * juce::double_Pi / 400;
-                    positionChannel = 0;
-                }
-            }
-
-            radsPerSample = (std::abs(currentPosition - position)) / speed;
-        }  
-        else
-            trans = 0;
-    }      
-    
-    for (int i = 0; i < buffer.getNumSamples(); i++)
-    {
-        currentPeakLength++;
-        // panning
-        if (currentPosition < position)
-            currentPosition += radsPerSample;
-        else if (currentPosition > position)
-            currentPosition -= radsPerSample;
-
-        channelDataL[i] = channelDataL[i] * std::sin(currentPosition) * panLowCompensation;
-        channelDataR[i] = channelDataR[i] * std::cos(currentPosition) * panLowCompensation;
-    }
+    // panning
+    panner.pan(buffer, transientComputer.transVector, width, speed, panModel);
 }
 
 //==============================================================================

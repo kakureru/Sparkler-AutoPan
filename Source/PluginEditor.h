@@ -6,7 +6,7 @@
 
 class SparklerAutoPanAudioProcessorEditor  : 
     public juce::AudioProcessorEditor,
-    public juce::HighResolutionTimer,
+    public juce::Timer,
     public juce::Slider::Listener
 {
 public:
@@ -16,7 +16,7 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    void hiResTimerCallback() override;
+    void timerCallback() override;
 
 private:
     SparklerAutoPanAudioProcessor& audioProcessor;

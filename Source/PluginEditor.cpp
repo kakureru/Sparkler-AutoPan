@@ -1,9 +1,10 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "TransientComputer.h"
 
 //===========================================================================================================
 SparklerAutoPanAudioProcessorEditor::SparklerAutoPanAudioProcessorEditor (SparklerAutoPanAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), waveformComponent(p),
+    : AudioProcessorEditor (&p), audioProcessor (p), waveformComponent(p.transientComputer),
     sensitivitySlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow),
     sharpnessSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow),
     peakLengthSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow),
@@ -33,7 +34,7 @@ SparklerAutoPanAudioProcessorEditor::SparklerAutoPanAudioProcessorEditor (Sparkl
 
     // add and make visible  
 
-    addAndMakeVisible(bypassButton);
+    //addAndMakeVisible(bypassButton);
 
     addAndMakeVisible(sensitivitySlider);
     addAndMakeVisible(sharpnessSlider);
@@ -44,7 +45,7 @@ SparklerAutoPanAudioProcessorEditor::SparklerAutoPanAudioProcessorEditor (Sparkl
 
     addAndMakeVisible(waveformComponent);
     
-    juce::HighResolutionTimer::startTimer(8);
+    juce::Timer::startTimerHz(120);
 
     setSize (pluginWidth, pluginHeight);
     setResizable(false, false);
@@ -52,7 +53,7 @@ SparklerAutoPanAudioProcessorEditor::SparklerAutoPanAudioProcessorEditor (Sparkl
 
 SparklerAutoPanAudioProcessorEditor::~SparklerAutoPanAudioProcessorEditor()
 {
-    juce::HighResolutionTimer::stopTimer();
+    juce::Timer::stopTimer();
 }
 
 //==============================================================================
@@ -127,7 +128,7 @@ void SparklerAutoPanAudioProcessorEditor::sliderValueChanged(juce::Slider* slide
     }
     if (slider == &speedSlider)
     {
-        audioProcessor.speed = std::abs(audioProcessor.apvts.getRawParameterValue("SPEED")->load() - 101) * audioProcessor.speedMultiplier;
+        audioProcessor.speed = std::abs(audioProcessor.apvts.getRawParameterValue("SPEED")->load() - 101);
     }
     if (slider == &widthSlider)
     {
@@ -135,7 +136,7 @@ void SparklerAutoPanAudioProcessorEditor::sliderValueChanged(juce::Slider* slide
     }
 }
 
-void SparklerAutoPanAudioProcessorEditor::hiResTimerCallback()
+void SparklerAutoPanAudioProcessorEditor::timerCallback()
 {
     waveformComponent.repaint();
 }

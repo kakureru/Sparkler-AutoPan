@@ -1,6 +1,8 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "TransientComputer.h"
+#include "Panner.h"
 
 class SparklerAutoPanAudioProcessor :   public juce::AudioProcessor
 {
@@ -44,10 +46,9 @@ public:
 
     //==============================================================================
     juce::AudioProcessorValueTreeState apvts;
-
-    juce::LinearSmoothedValue<float> rmsLevel;
-    juce::LinearSmoothedValue<float> rmsLevelLatency;
-    bool trans = 0;
+        
+    TransientComputer transientComputer;
+    Panner panner;
 
     int speedMultiplier = 1000;
     float sensitivityMultiplier = 0.2f;
@@ -60,16 +61,7 @@ public:
     float speed;
     int width;
     
-    double currentPeakLength = 1100000;
-    double sampleRateValue;
-                     
-    int mDetectionLength = 128;
-
-    float position = juce::double_Pi / 4;
-    float currentPosition = position;
-    float radsPerSample = 0;
-    bool positionChannel = 0;
-    float panLowCompensation = 2 / (std::sin(juce::double_Pi / 4) + std::cos(juce::double_Pi / 4));
+    double sampleRateValue;                     
 
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();   

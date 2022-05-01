@@ -11,10 +11,15 @@
       <FILE id="OCxM4P" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="RhvVIJ" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="zCEeeU" name="WaveformComponent.cpp" compile="1" resource="0"
-            file="Source/WaveformComponent.cpp"/>
+      <FILE id="GMo7f6" name="TransientComputer.cpp" compile="1" resource="0"
+            file="Source/TransientComputer.cpp"/>
+      <FILE id="akL4SH" name="TransientComputer.h" compile="0" resource="0"
+            file="Source/TransientComputer.h"/>
+      <FILE id="euLgBt" name="Panner.cpp" compile="1" resource="0" file="Source/Panner.cpp"/>
+      <FILE id="eU0PGI" name="Panner.h" compile="0" resource="0" file="Source/Panner.h"/>
       <FILE id="iL2JwT" name="WaveformComponent.h" compile="0" resource="0"
             file="Source/WaveformComponent.h"/>
+      <FILE id="kX0K0K" name="PanComponent.h" compile="0" resource="0" file="Source/PanComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
@@ -38,6 +43,7 @@
         <MODULEPATH id="juce_gui_basics" path="E:/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="E:/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="E:/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="E:/JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>
@@ -51,6 +57,7 @@
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
