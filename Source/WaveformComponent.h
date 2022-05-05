@@ -9,7 +9,7 @@ class WaveformComponent  : public juce::Component
 public:
     WaveformComponent(TransientComputer& tc): transientComputer(tc)
     {
-        setSize(550, 150);
+        setSize(width, height);
     }
     ~WaveformComponent() override
     {

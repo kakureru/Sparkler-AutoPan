@@ -4,7 +4,7 @@
 
 //===========================================================================================================
 SparklerAutoPanAudioProcessorEditor::SparklerAutoPanAudioProcessorEditor (SparklerAutoPanAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), waveformComponent(p.transientComputer),
+    : AudioProcessorEditor (&p), audioProcessor (p), waveformComponent(p.transientComputer), panComponent(p.panner),
     sensitivitySlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow),
     sharpnessSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow),
     peakLengthSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow),
@@ -44,6 +44,7 @@ SparklerAutoPanAudioProcessorEditor::SparklerAutoPanAudioProcessorEditor (Sparkl
     addAndMakeVisible(widthSlider);
 
     addAndMakeVisible(waveformComponent);
+    addAndMakeVisible(panComponent);
     
     juce::Timer::startTimerHz(120);
 
@@ -105,6 +106,7 @@ void SparklerAutoPanAudioProcessorEditor::resized()
     widthSlider.setBounds(row.removeFromLeft(knobSize));
 
     waveformComponent.setTopLeftPosition(0, topSize);
+    panComponent.setTopLeftPosition(0, topSize + 155);
     bypassButton.setBounds(480, 7, 60, 26);
 }
 
@@ -139,4 +141,5 @@ void SparklerAutoPanAudioProcessorEditor::sliderValueChanged(juce::Slider* slide
 void SparklerAutoPanAudioProcessorEditor::timerCallback()
 {
     waveformComponent.repaint();
+    panComponent.repaint();
 }

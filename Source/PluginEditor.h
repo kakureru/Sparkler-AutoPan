@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "WaveformComponent.h"
+#include "PanComponent.h"
 
 class SparklerAutoPanAudioProcessorEditor  : 
     public juce::AudioProcessorEditor,
@@ -22,6 +23,7 @@ private:
     SparklerAutoPanAudioProcessor& audioProcessor;
 
     WaveformComponent waveformComponent;
+    PanComponent panComponent;
 
     juce::TextButton bypassButton{ "bypass" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassButtonAttachment;
